@@ -328,6 +328,34 @@ class MonitorRestApiIT : AlertingRestTestCase() {
         assertEquals("Monitor search not updated", listOf(updatedSearch), updatedMonitor.inputs)
     }
 
+    fun `test enabling a monitor`() {
+        val monitor = createRandomMonitor()
+        val id = monitor.id
+        val updateResponse = client().makeRequest(
+            "PUT", monitor.relativeUrl(),
+            emptyMap(), monitor.copy(enabled = false).toHttpEntity()
+        )
+        assertEquals("Update monitor failed", RestStatus.OK, updateResponse.restStatus())
+        val enableResponse = client().makeRequest("PUT", "_plugins/_alerting/monitors/{monitor_id}/enable" , emptyMap())
+        assertEquals("Enable monitor failed", RestStatus.OK, enableResponse.restStatus())
+        val updatedMonitor = getMonitor(id)
+        assertEquals("monitor is not enabled", updatedMonitor.enabled, true)
+    }
+
+    fun `test disabling a monitor`() {
+        val monitor = createRandomMonitor()
+        val id = monitor.id
+        val updateResponse = client().makeRequest(
+            "PUT", monitor.relativeUrl(),
+            emptyMap(), monitor.copy(enabled = true).toHttpEntity()
+        )
+        assertEquals("Update monitor failed", RestStatus.OK, updateResponse.restStatus())
+        val disableResponse = client().makeRequest("PUT", "_plugins/_alerting/monitors/{monitor_id}/disable" , emptyMap())
+        assertEquals("Disable monitor failed", RestStatus.OK, disableResponse.restStatus())
+        val updatedMonitor = getMonitor(id)
+        assertEquals("monitor is not disabled", updatedMonitor.enabled, false)
+    }
+
     @Throws(Exception::class)
     fun `test updating conditions for a monitor`() {
         val monitor = createRandomMonitor()
