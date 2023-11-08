@@ -336,10 +336,12 @@ class MonitorRestApiIT : AlertingRestTestCase() {
             emptyMap(), monitor.copy(enabled = false).toHttpEntity()
         )
         assertEquals("Update monitor failed", RestStatus.OK, updateResponse.restStatus())
-        val enableResponse = client().makeRequest("PUT", "_plugins/_alerting/monitors/{monitor_id}/enable" , emptyMap())
+        val disabledMonitor = getMonitor(id)
+        assertEquals("Disable monitor failed", disabledMonitor.enabled, false)
+        val enableResponse = client().makeRequest("PUT", "_plugins/_alerting/monitors/{monitor_id}/status", { enabled = true})
         assertEquals("Enable monitor failed", RestStatus.OK, enableResponse.restStatus())
-        val updatedMonitor = getMonitor(id)
-        assertEquals("monitor is not enabled", updatedMonitor.enabled, true)
+        val enabledMonitor = getMonitor(id)
+        assertEquals("monitor is not enabled", enabledMonitor.enabled, true)
     }
 
     fun `test disabling a monitor`() {
@@ -350,10 +352,12 @@ class MonitorRestApiIT : AlertingRestTestCase() {
             emptyMap(), monitor.copy(enabled = true).toHttpEntity()
         )
         assertEquals("Update monitor failed", RestStatus.OK, updateResponse.restStatus())
-        val disableResponse = client().makeRequest("PUT", "_plugins/_alerting/monitors/{monitor_id}/disable" , emptyMap())
+        val enabledMonitor = getMonitor(id)
+        assertEquals("Enable monitor failed", enabledMonitor.enabled, true)
+        val disableResponse = client().makeRequest("PUT", "_plugins/_alerting/monitors/{monitor_id}/status" , { enabled = false})
         assertEquals("Disable monitor failed", RestStatus.OK, disableResponse.restStatus())
-        val updatedMonitor = getMonitor(id)
-        assertEquals("monitor is not disabled", updatedMonitor.enabled, false)
+        val disabledMonitor = getMonitor(id)
+        assertEquals("monitor is not disabled", disabledMonitor.enabled, false)
     }
 
     @Throws(Exception::class)

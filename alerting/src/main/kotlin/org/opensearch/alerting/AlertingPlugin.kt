@@ -6,7 +6,6 @@
 package org.opensearch.alerting
 
 import org.opensearch.action.ActionRequest
-import org.opensearch.alerting.action.DisableMonitorAction
 import org.opensearch.alerting.action.EnableMonitorAction
 import org.opensearch.alerting.action.ExecuteMonitorAction
 import org.opensearch.alerting.action.ExecuteWorkflowAction
@@ -30,7 +29,6 @@ import org.opensearch.alerting.resthandler.RestAcknowledgeAlertAction
 import org.opensearch.alerting.resthandler.RestAcknowledgeChainedAlertAction
 import org.opensearch.alerting.resthandler.RestDeleteMonitorAction
 import org.opensearch.alerting.resthandler.RestDeleteWorkflowAction
-import org.opensearch.alerting.resthandler.RestDisableMonitorAction
 import org.opensearch.alerting.resthandler.RestEnableMonitorAction
 import org.opensearch.alerting.resthandler.RestExecuteMonitorAction
 import org.opensearch.alerting.resthandler.RestExecuteWorkflowAction
@@ -57,7 +55,6 @@ import org.opensearch.alerting.transport.TransportAcknowledgeAlertAction
 import org.opensearch.alerting.transport.TransportAcknowledgeChainedAlertAction
 import org.opensearch.alerting.transport.TransportDeleteMonitorAction
 import org.opensearch.alerting.transport.TransportDeleteWorkflowAction
-import org.opensearch.alerting.transport.TransportDisableMonitorAction
 import org.opensearch.alerting.transport.TransportEnableMonitorAction
 import org.opensearch.alerting.transport.TransportExecuteMonitorAction
 import org.opensearch.alerting.transport.TransportExecuteWorkflowAction
@@ -173,7 +170,6 @@ internal class AlertingPlugin : PainlessExtension, ActionPlugin, ScriptPlugin, R
     ): List<RestHandler> {
         return listOf(
             RestEnableMonitorAction(),
-            RestDisableMonitorAction(),
             RestGetMonitorAction(),
             RestDeleteMonitorAction(),
             RestIndexMonitorAction(),
@@ -199,7 +195,6 @@ internal class AlertingPlugin : PainlessExtension, ActionPlugin, ScriptPlugin, R
 
     override fun getActions(): List<ActionPlugin.ActionHandler<out ActionRequest, out ActionResponse>> {
         return listOf(
-            ActionPlugin.ActionHandler(DisableMonitorAction.INSTANCE, TransportDisableMonitorAction::class.java),
             ActionPlugin.ActionHandler(EnableMonitorAction.INSTANCE, TransportEnableMonitorAction::class.java),
             ActionPlugin.ActionHandler(ScheduledJobsStatsAction.INSTANCE, ScheduledJobsStatsTransportAction::class.java),
             ActionPlugin.ActionHandler(AlertingActions.INDEX_MONITOR_ACTION_TYPE, TransportIndexMonitorAction::class.java),
